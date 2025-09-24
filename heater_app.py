@@ -1,0 +1,444 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+from heater_model import Heater, INPUT_SPECS, OUTPUT_SPECS, OUTPUT_SECTIONS
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+# Configure the page
+st.set_page_config(
+    page_title="🔥 Heater Efficiency Calculator",
+    page_icon="🔥",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Custom CSS for stunning visuals
+st.markdown("""
+<style>
+    .main {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .css-1d391kg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    div[data-testid="metric-container"] {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    div[data-testid="metric-container"] > label[data-testid="metric-label"] > div {
+        overflow-wrap: break-word;
+        white-space: break-spaces;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    div[data-testid="stSidebar"] > div {
+        background: linear-gradient(180deg, #2D1B69 0%, #11998e 100%);
+    }
+
+    .stSelectbox > div > div {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 5px;
+    }
+
+    .stNumberInput > div > div {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 5px;
+    }
+
+    .custom-header {
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .section-header {
+        background: linear-gradient(45deg, #ff9a56, #ffd93d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ffd93d;
+        padding-bottom: 0.5rem;
+    }
+
+    .expander-content {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .highlight-box {
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        color: #333;
+        padding: 1rem;
+        border-radius: 10px;
+        margin: 1rem 0;
+        border-left: 4px solid #ff6b6b;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Initialize session state for inputs
+if 'heater_inputs' not in st.session_state:
+    st.session_state.heater_inputs = {}
+
+# Main header
+st.markdown('<h1 class="custom-header">🔥 Heater Efficiency Calculator</h1>', unsafe_allow_html=True)
+st.markdown(
+    '<p style="text-align: center; font-size: 1.2rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">Advanced API-560 Based Heater Performance Analysis</p>',
+    unsafe_allow_html=True
+)
+
+# Sidebar for inputs
+with st.sidebar:
+    st.markdown('<h2 class="section-header">⚙️ Input Parameters</h2>', unsafe_allow_html=True)
+
+    # Group inputs by category
+    basic_inputs = [s for s in INPUT_SPECS if s.row and s.row <= 8]
+    composition_inputs = [s for s in INPUT_SPECS if s.row and 10 <= s.row <= 25]
+    trends_inputs = [s for s in INPUT_SPECS if s.row and 27 <= s.row <= 31]
+    cems_inputs = [s for s in INPUT_SPECS if s.row and 33 <= s.row <= 40]
+    constants_inputs = [s for s in INPUT_SPECS if s.row and s.row >= 42]
+
+    # Basic Operating Parameters
+    st.markdown("### 🎯 Basic Operating Parameters")
+    for spec in basic_inputs:
+        key = spec.name
+        label = f"{spec.desc} ({spec.uom})" if spec.uom else spec.desc
+
+        # Set default values for demonstration
+        default_values = {
+            'fuel_gas_flow_corrected': 837.0,
+            'fuel_gas_temp': 25.0,
+            'air_temperature': 25.0,
+            'o2_analyzer': 4.0,
+            'stack_temp': 240.0,
+            'arch_temp_bwt': 675.0,
+        }
+
+        default_val = default_values.get(key, 0.0)
+        st.session_state.heater_inputs[key] = st.number_input(
+            label,
+            value=st.session_state.heater_inputs.get(key, default_val),
+            step=0.1,
+            key=f"input_{key}"
+        )
+
+    # Fuel Gas Composition
+    st.markdown("### 🧪 Fuel Gas Composition")
+    composition_defaults = {
+        'c1': 51.1, 'c2': 13.4, 'c2_unsat': 0.0, 'c3': 9.06,
+        'c3_unsat': 0.0, 'i_c4': 3.72, 'n_c4': 3.47, 'c4_unsat': 0.0,
+        'c5': 0.75, 'c6': 0.0, 'n2': 0.0, 'h2': 70.83,
+        'O2_argon': 0.0, 'co': 0.0, 'co2': 0.178, 'h2s': 0.0001
+    }
+
+    for spec in composition_inputs:
+        key = spec.name
+        label = f"{spec.desc} ({spec.uom})" if spec.uom else spec.desc
+        default_val = composition_defaults.get(key, 0.0)
+        st.session_state.heater_inputs[key] = st.number_input(
+            label,
+            value=st.session_state.heater_inputs.get(key, default_val),
+            step=0.01,
+            format="%.3f",
+            key=f"input_{key}"
+        )
+
+    # Operating Trends
+    st.markdown("### 📈 Operating Trends")
+    trends_defaults = {
+        'burner_pressure': 3.5,
+        'draft_pressure': -2.0,
+        'min_skin_coils_temp': 450.0,
+        'max_skin_coils_temp': 500.0,
+        'avg_skin_coils_temp': 475.0
+    }
+
+    for spec in trends_inputs:
+        key = spec.name
+        label = f"{spec.desc} ({spec.uom})" if spec.uom else spec.desc
+        default_val = trends_defaults.get(key, 0.0)
+        st.session_state.heater_inputs[key] = st.number_input(
+            label,
+            value=st.session_state.heater_inputs.get(key, default_val),
+            step=0.1,
+            key=f"input_{key}"
+        )
+
+    # CEMS Data
+    st.markdown("### 🔬 CEMS Data")
+    cems_defaults = {
+        'dust_analyzer': 10.0,
+        'flue_gas_sox_analyzer': 50.0,
+        'flue_gas_nox_analyzer': 100.0,
+        'flue_gas_co_analyzer': 150.0,
+        'flue_gas_o2_analyzer': 4.2,
+        'flue_gas_flow': 10000.0,
+        'flue_gas_pressure': 1.0,
+        'flue_gas_temp': 240.0
+    }
+
+    for spec in cems_inputs:
+        key = spec.name
+        label = f"{spec.desc} ({spec.uom})" if spec.uom else spec.desc
+        default_val = cems_defaults.get(key, 0.0)
+        st.session_state.heater_inputs[key] = st.number_input(
+            label,
+            value=st.session_state.heater_inputs.get(key, default_val),
+            step=0.1,
+            key=f"input_{key}"
+        )
+
+    # Constants
+    st.markdown("### 🔢 Constants")
+    constants_defaults = {
+        'sea_level_pressure': 1013.0,
+        'relative_humidity': 60.0,
+        'altitude': 0.0,
+        'radiation_loss': 3.0
+    }
+
+    for spec in constants_inputs:
+        key = spec.name
+        label = f"{spec.desc} ({spec.uom})" if spec.uom else spec.desc
+        default_val = constants_defaults.get(key, 0.0)
+        st.session_state.heater_inputs[key] = st.number_input(
+            label,
+            value=st.session_state.heater_inputs.get(key, default_val),
+            step=0.1,
+            key=f"input_{key}"
+        )
+
+# Calculate button
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    if st.button("🚀 Calculate Heater Performance", use_container_width=True, type="primary"):
+        try:
+            # Create heater instance and compute
+            heater = Heater(**st.session_state.heater_inputs)
+            results = heater.compute()
+            st.session_state.results = results
+            st.success("✅ Calculation completed successfully!")
+        except Exception as e:
+            st.error(f"❌ Calculation failed: {str(e)}")
+            st.session_state.results = None
+
+# Display results
+if 'results' in st.session_state and st.session_state.results:
+    results = st.session_state.results
+
+    # Key Performance Indicators
+    st.markdown('<h2 class="section-header">📊 Key Performance Indicators</h2>', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        thermal_eff = results.get('thermal_efficiency', 0)
+        st.metric(
+            label="🔥 Thermal Efficiency",
+            value=f"{thermal_eff:.2f}%",
+            delta=f"{thermal_eff - 85:.2f}% from target"
+        )
+
+    with col2:
+        fuel_eff = results.get('fuel_efficiency', 0)
+        st.metric(
+            label="⛽ Fuel Efficiency",
+            value=f"{fuel_eff:.2f}%",
+            delta=f"{fuel_eff - 85:.2f}% from target"
+        )
+
+    with col3:
+        excess_air = results.get('excess_air', 0)
+        st.metric(
+            label="💨 Excess Air",
+            value=f"{excess_air:.1f}%",
+            delta=f"{20 - excess_air:.1f}% from optimal" if excess_air > 20 else f"Optimal range"
+        )
+
+    with col4:
+        ghg_rate = results.get('ghg_rate', 0)
+        st.metric(
+            label="🌍 GHG Rate",
+            value=f"{ghg_rate:.3f} Ton CO2/h",
+            delta=None
+        )
+
+    # Performance Chart
+    st.markdown('<h2 class="section-header">📈 Performance Overview</h2>', unsafe_allow_html=True)
+
+    # Create performance comparison chart
+    performance_data = {
+        'Metric': ['Thermal Efficiency', 'Fuel Efficiency', 'Excess Air Ratio'],
+        'Actual': [thermal_eff, fuel_eff, excess_air/20*100],  # Normalize excess air
+        'Target': [88, 88, 100],  # Target values
+        'Units': ['%', '%', '% of Optimal']
+    }
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        name='Actual',
+        x=performance_data['Metric'],
+        y=performance_data['Actual'],
+        marker_color='rgba(255, 107, 107, 0.8)',
+        text=[f"{val:.1f}%" for val in performance_data['Actual']],
+        textposition='auto',
+    ))
+
+    fig.add_trace(go.Bar(
+        name='Target',
+        x=performance_data['Metric'],
+        y=performance_data['Target'],
+        marker_color='rgba(78, 205, 196, 0.8)',
+        text=[f"{val:.1f}%" for val in performance_data['Target']],
+        textposition='auto',
+    ))
+
+    fig.update_layout(
+        title="Performance vs Target Values",
+        barmode='group',
+        template='plotly_dark',
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font_color='white',
+        height=400
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    # Detailed Results by Section
+    st.markdown('<h2 class="section-header">📋 Detailed Results</h2>', unsafe_allow_html=True)
+
+    # Group outputs by section
+    sections_to_show = [
+        'Fuel data',
+        'Heater performance Based on Wet Analyzer',
+        'Heater performance Based on Dry Analyzer',
+        'Fuel Gas Composition',
+        'Calculations'
+    ]
+
+    for section_name in sections_to_show:
+        if section_name in OUTPUT_SECTIONS:
+            with st.expander(f"🔍 {section_name}", expanded=(section_name in ['Fuel data', 'Heater performance Based on Wet Analyzer'])):
+                output_names = OUTPUT_SECTIONS[section_name]
+
+                # Create DataFrame for this section
+                section_data = []
+                for output_name in output_names:
+                    if output_name in results:
+                        # Find the spec for units
+                        spec = next((s for s in OUTPUT_SPECS if s.name == output_name), None)
+                        unit = spec.uom if spec and spec.uom else ""
+                        description = spec.desc if spec and spec.desc else output_name
+
+                        section_data.append({
+                            'Parameter': description,
+                            'Value': f"{results[output_name]:.4f}",
+                            'Unit': unit
+                        })
+
+                if section_data:
+                    df = pd.DataFrame(section_data)
+
+                    # Style the dataframe
+                    st.markdown(
+                        f'<div class="expander-content">',
+                        unsafe_allow_html=True
+                    )
+
+                    # Display as formatted table
+                    for _, row in df.iterrows():
+                        col1, col2, col3 = st.columns([2, 1, 1])
+                        with col1:
+                            st.write(f"**{row['Parameter']}**")
+                        with col2:
+                            st.write(row['Value'])
+                        with col3:
+                            st.write(row['Unit'])
+
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Energy Balance Visualization
+    st.markdown('<h2 class="section-header">⚡ Energy Balance</h2>', unsafe_allow_html=True)
+
+    absorbed_duty = results.get('absorbed_duty', 0)
+    radiant_duty = results.get('radiant_duty', 0)
+    convection_duty = results.get('convection_duty', 0)
+    heater_librated_heat = results.get('heater_librated_heat', 0)
+
+    # Create energy balance pie chart
+    energy_data = {
+        'Energy Type': ['Radiant Duty', 'Convection Duty', 'Stack Losses'],
+        'Value': [
+            radiant_duty,
+            convection_duty,
+            heater_librated_heat - absorbed_duty
+        ],
+        'Colors': ['#ff6b6b', '#4ecdc4', '#ffe66d']
+    }
+
+    fig_pie = go.Figure(data=[go.Pie(
+        labels=energy_data['Energy Type'],
+        values=energy_data['Value'],
+        hole=.3,
+        marker_colors=energy_data['Colors'],
+        textinfo='label+percent',
+        textfont_size=12
+    )])
+
+    fig_pie.update_layout(
+        title="Energy Distribution",
+        template='plotly_dark',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font_color='white',
+        height=400
+    )
+
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.plotly_chart(fig_pie, use_container_width=True)
+
+    with col2:
+        st.markdown('<div class="highlight-box">', unsafe_allow_html=True)
+        st.markdown("### 📈 Performance Summary")
+        st.write(f"**Total Heat Liberation:** {heater_librated_heat:.3f} Gcal/h")
+        st.write(f"**Absorbed Duty:** {absorbed_duty:.3f} Gcal/h")
+        st.write(f"**Stack Losses:** {heater_librated_heat - absorbed_duty:.3f} Gcal/h")
+        st.write(f"**Heat Absorption Efficiency:** {(absorbed_duty/heater_librated_heat)*100:.2f}%")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# Footer
+st.markdown("---")
+st.markdown(
+    '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">🔥 Heater Efficiency Calculator | Based on API-560 Standards | Developed by Ahmed Mohamed Sabri</p>',
+    unsafe_allow_html=True
+)
