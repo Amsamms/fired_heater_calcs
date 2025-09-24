@@ -237,6 +237,67 @@ with st.sidebar:
             key=f"input_{key}"
         )
 
+    # Design Efficiency Targets
+    st.markdown("### 🎯 Design Efficiency Targets")
+    st.info("💡 **Note:** These values can be found in the fired heater datasheet or design specifications.")
+
+    # Radio button to select which efficiency to input
+    efficiency_input_mode = st.radio(
+        "Select which design efficiency to input:",
+        ["Design Thermal Efficiency", "Design Fuel Efficiency", "Input Both"],
+        key="efficiency_mode"
+    )
+
+    if efficiency_input_mode == "Design Thermal Efficiency":
+        design_thermal_eff = st.number_input(
+            "Design Thermal Efficiency (%)",
+            value=st.session_state.get('design_thermal_eff', 85.0),
+            min_value=50.0,
+            max_value=95.0,
+            step=0.1,
+            help="Thermal efficiency from heater datasheet",
+            key="design_thermal_input"
+        )
+        st.session_state.design_thermal_eff = design_thermal_eff
+        st.session_state.design_fuel_eff = None  # Will be calculated
+        st.info("🔄 Design Fuel Efficiency will be calculated automatically based on fuel composition")
+
+    elif efficiency_input_mode == "Design Fuel Efficiency":
+        design_fuel_eff = st.number_input(
+            "Design Fuel Efficiency (%)",
+            value=st.session_state.get('design_fuel_eff', 87.0),
+            min_value=50.0,
+            max_value=95.0,
+            step=0.1,
+            help="Fuel efficiency from heater datasheet",
+            key="design_fuel_input"
+        )
+        st.session_state.design_fuel_eff = design_fuel_eff
+        st.session_state.design_thermal_eff = None  # Will be calculated
+        st.info("🔄 Design Thermal Efficiency will be calculated automatically based on fuel composition")
+
+    else:  # Input Both
+        design_thermal_eff = st.number_input(
+            "Design Thermal Efficiency (%)",
+            value=st.session_state.get('design_thermal_eff', 85.0),
+            min_value=50.0,
+            max_value=95.0,
+            step=0.1,
+            help="Thermal efficiency from heater datasheet",
+            key="design_thermal_both"
+        )
+        design_fuel_eff = st.number_input(
+            "Design Fuel Efficiency (%)",
+            value=st.session_state.get('design_fuel_eff', 87.0),
+            min_value=50.0,
+            max_value=95.0,
+            step=0.1,
+            help="Fuel efficiency from heater datasheet",
+            key="design_fuel_both"
+        )
+        st.session_state.design_thermal_eff = design_thermal_eff
+        st.session_state.design_fuel_eff = design_fuel_eff
+
 # Calculate button
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
@@ -246,6 +307,34 @@ with col2:
             heater = Heater(**st.session_state.heater_inputs)
             results = heater.compute()
             st.session_state.results = results
+
+            # Calculate missing design efficiency if needed
+            if hasattr(st.session_state, 'design_thermal_eff') and hasattr(st.session_state, 'design_fuel_eff'):
+                # Get fuel properties for efficiency relationship calculation
+                lhv = results.get('lower_heating_value', 12481.0)  # kcal/kg
+
+                # Calculate sensible heat contributions (simplified estimation)
+                # These would be more accurate with actual temperature data
+                sensible_air_ratio = 1.02  # Typical ratio of (LHV + sensible air)/LHV
+                sensible_fuel_ratio = 1.001  # Small contribution from fuel heating
+
+                total_heat_input_ratio = sensible_air_ratio + sensible_fuel_ratio
+
+                if st.session_state.design_thermal_eff is None and st.session_state.design_fuel_eff is not None:
+                    # Calculate thermal efficiency from fuel efficiency
+                    st.session_state.design_thermal_eff = st.session_state.design_fuel_eff / total_heat_input_ratio
+
+                elif st.session_state.design_fuel_eff is None and st.session_state.design_thermal_eff is not None:
+                    # Calculate fuel efficiency from thermal efficiency
+                    st.session_state.design_fuel_eff = st.session_state.design_thermal_eff * total_heat_input_ratio
+
+            # Display calculated design efficiency if applicable
+            if hasattr(st.session_state, 'design_thermal_eff') and hasattr(st.session_state, 'design_fuel_eff'):
+                if efficiency_input_mode == "Design Thermal Efficiency":
+                    st.info(f"🔄 **Calculated Design Fuel Efficiency:** {st.session_state.design_fuel_eff:.2f}%")
+                elif efficiency_input_mode == "Design Fuel Efficiency":
+                    st.info(f"🔄 **Calculated Design Thermal Efficiency:** {st.session_state.design_thermal_eff:.2f}%")
+
             st.success("✅ Calculation completed successfully!")
         except Exception as e:
             st.error(f"❌ Calculation failed: {str(e)}")
@@ -262,18 +351,20 @@ if 'results' in st.session_state and st.session_state.results:
 
     with col1:
         thermal_eff = results.get('thermal_efficiency', 0)
+        design_thermal_target = getattr(st.session_state, 'design_thermal_eff', 85.0)
         st.metric(
             label="🔥 Thermal Efficiency",
             value=f"{thermal_eff:.2f}%",
-            delta=f"{thermal_eff - 85:.2f}% from target"
+            delta=f"{thermal_eff - design_thermal_target:.2f}% from design"
         )
 
     with col2:
         fuel_eff = results.get('fuel_efficiency', 0)
+        design_fuel_target = getattr(st.session_state, 'design_fuel_eff', 87.0)
         st.metric(
             label="⛽ Fuel Efficiency",
             value=f"{fuel_eff:.2f}%",
-            delta=f"{fuel_eff - 85:.2f}% from target"
+            delta=f"{fuel_eff - design_fuel_target:.2f}% from design"
         )
 
     with col3:
@@ -296,10 +387,13 @@ if 'results' in st.session_state and st.session_state.results:
     st.markdown('<h2 class="section-header">📈 Performance Overview</h2>', unsafe_allow_html=True)
 
     # Create performance comparison chart
+    design_thermal_target = getattr(st.session_state, 'design_thermal_eff', 85.0)
+    design_fuel_target = getattr(st.session_state, 'design_fuel_eff', 87.0)
+
     performance_data = {
         'Metric': ['Thermal Efficiency', 'Fuel Efficiency', 'Excess Air Ratio'],
         'Actual': [thermal_eff, fuel_eff, excess_air/20*100],  # Normalize excess air
-        'Target': [88, 88, 100],  # Target values
+        'Design Target': [design_thermal_target, design_fuel_target, 100],  # Design values
         'Units': ['%', '%', '% of Optimal']
     }
 
@@ -314,16 +408,16 @@ if 'results' in st.session_state and st.session_state.results:
     ))
 
     fig.add_trace(go.Bar(
-        name='Target',
+        name='Design Target',
         x=performance_data['Metric'],
-        y=performance_data['Target'],
+        y=performance_data['Design Target'],
         marker_color='rgba(78, 205, 196, 0.8)',
-        text=[f"{val:.1f}%" for val in performance_data['Target']],
+        text=[f"{val:.1f}%" for val in performance_data['Design Target']],
         textposition='auto',
     ))
 
     fig.update_layout(
-        title="Performance vs Target Values",
+        title="Performance vs Design Target Values",
         barmode='group',
         template='plotly_dark',
         paper_bgcolor='rgba(0,0,0,0)',
