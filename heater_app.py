@@ -310,30 +310,34 @@ with col2:
 
             # Calculate missing design efficiency if needed
             if hasattr(st.session_state, 'design_thermal_eff') and hasattr(st.session_state, 'design_fuel_eff'):
-                # Get fuel properties for efficiency relationship calculation
+                # Get actual calculated values for precise efficiency relationship
                 lhv = results.get('lower_heating_value', 12481.0)  # kcal/kg
+                air_sensible = results.get('air_sensible_massic_heat_correction_wet_ha_wet', 49.7)  # kcal/kg
+                fuel_sensible = results.get('fuel_sensible_massic_heat_correction_hf', 26.3)  # kcal/kg
 
-                # Calculate sensible heat contributions (simplified estimation)
-                # These would be more accurate with actual temperature data
-                sensible_air_ratio = 1.02  # Typical ratio of (LHV + sensible air)/LHV
-                sensible_fuel_ratio = 1.001  # Small contribution from fuel heating
-
-                total_heat_input_ratio = sensible_air_ratio + sensible_fuel_ratio
+                # Calculate the correct ratio based on actual heater model values
+                # Ratio = (LHV + Air_Sensible + Fuel_Sensible) / LHV
+                total_heat_input = lhv + air_sensible + fuel_sensible
+                heat_input_ratio = total_heat_input / lhv
 
                 if st.session_state.design_thermal_eff is None and st.session_state.design_fuel_eff is not None:
                     # Calculate thermal efficiency from fuel efficiency
-                    st.session_state.design_thermal_eff = st.session_state.design_fuel_eff / total_heat_input_ratio
+                    # Thermal_Eff = Fuel_Eff / Ratio
+                    st.session_state.design_thermal_eff = st.session_state.design_fuel_eff / heat_input_ratio
 
                 elif st.session_state.design_fuel_eff is None and st.session_state.design_thermal_eff is not None:
                     # Calculate fuel efficiency from thermal efficiency
-                    st.session_state.design_fuel_eff = st.session_state.design_thermal_eff * total_heat_input_ratio
+                    # Fuel_Eff = Thermal_Eff × Ratio
+                    st.session_state.design_fuel_eff = st.session_state.design_thermal_eff * heat_input_ratio
 
             # Display calculated design efficiency if applicable
             if hasattr(st.session_state, 'design_thermal_eff') and hasattr(st.session_state, 'design_fuel_eff'):
                 if efficiency_input_mode == "Design Thermal Efficiency":
                     st.info(f"🔄 **Calculated Design Fuel Efficiency:** {st.session_state.design_fuel_eff:.2f}%")
+                    st.caption(f"📐 Heat Input Ratio: {heat_input_ratio:.4f} | LHV: {lhv:.1f} | Air: {air_sensible:.1f} | Fuel: {fuel_sensible:.1f} kcal/kg")
                 elif efficiency_input_mode == "Design Fuel Efficiency":
                     st.info(f"🔄 **Calculated Design Thermal Efficiency:** {st.session_state.design_thermal_eff:.2f}%")
+                    st.caption(f"📐 Heat Input Ratio: {heat_input_ratio:.4f} | LHV: {lhv:.1f} | Air: {air_sensible:.1f} | Fuel: {fuel_sensible:.1f} kcal/kg")
 
             st.success("✅ Calculation completed successfully!")
         except Exception as e:
