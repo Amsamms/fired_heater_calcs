@@ -66,15 +66,64 @@ st.markdown("""
 
     /* Sidebar */
     div[data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
+        background: linear-gradient(180deg, #1e293b 0%, #1e3a8a 100%);
     }
 
-    /* Sidebar text */
-    div[data-testid="stSidebar"] * {
+    /* Sidebar headings and labels */
+    div[data-testid="stSidebar"] h2,
+    div[data-testid="stSidebar"] h3,
+    div[data-testid="stSidebar"] label {
+        color: #ffffff !important;
+    }
+
+    /* Sidebar markdown text */
+    div[data-testid="stSidebar"] .stMarkdown {
         color: #f0f9ff !important;
     }
 
-    /* Input fields */
+    /* Sidebar number input containers */
+    div[data-testid="stSidebar"] .stNumberInput > div > div > input {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        color: #0f172a !important;
+        border: 2px solid rgba(6, 182, 212, 0.5) !important;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+
+    div[data-testid="stSidebar"] .stNumberInput > div > div > input:focus {
+        background-color: #ffffff !important;
+        border: 2px solid #06b6d4 !important;
+        box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+    }
+
+    /* Sidebar number input labels */
+    div[data-testid="stSidebar"] .stNumberInput label {
+        color: #bae6fd !important;
+        font-weight: 500;
+    }
+
+    /* Sidebar radio buttons */
+    div[data-testid="stSidebar"] .stRadio > label {
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+
+    div[data-testid="stSidebar"] .stRadio label[data-baseweb="radio"] {
+        color: #e0f2fe !important;
+    }
+
+    /* Sidebar info boxes */
+    div[data-testid="stSidebar"] div[data-testid="stAlert"] {
+        background-color: rgba(6, 182, 212, 0.25) !important;
+        border: 1px solid rgba(6, 182, 212, 0.6) !important;
+        color: #ffffff !important;
+    }
+
+    div[data-testid="stSidebar"] div[data-testid="stAlert"] * {
+        color: #ffffff !important;
+    }
+
+    /* Input fields in main area */
     .stSelectbox > div > div {
         background-color: rgba(30, 58, 138, 0.3);
         border: 1px solid rgba(6, 182, 212, 0.4);
