@@ -14,243 +14,263 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for professional visuals
+# Custom CSS for professional visuals with high contrast
 st.markdown("""
 <style>
+    /* Main app background - professional dark theme */
     .main {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        color: #f0f9ff;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+        color: #ffffff;
     }
 
     .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        color: #f0f9ff;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+        color: #ffffff;
     }
 
-    .css-1d391kg {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    /* All body text - pure white for maximum contrast */
+    p, span, div, label, .stMarkdown {
+        color: #ffffff !important;
     }
 
-    /* All body text - bright and readable */
-    p, span, div, label {
-        color: #f0f9ff !important;
-    }
-
-    /* Metric containers */
+    /* Metric containers - high contrast design */
     div[data-testid="metric-container"] {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
-        border: 1px solid rgba(6, 182, 212, 0.4);
-        padding: 1rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+        border: 2px solid rgba(14, 165, 233, 0.6);
+        padding: 1.2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
 
     div[data-testid="metric-container"] > label[data-testid="metric-label"] > div {
-        overflow-wrap: break-word;
-        white-space: break-spaces;
-        color: #7dd3fc !important;
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    div[data-testid="metric-container"] [data-testid="stMetricValue"] {
+        color: #38bdf8 !important;
+        font-size: 2rem !important;
+        font-weight: 700;
+    }
+
+    div[data-testid="metric-container"] [data-testid="stMetricDelta"] {
+        color: #ffffff !important;
         font-weight: 600;
     }
 
-    /* Metric values - bright white */
-    div[data-testid="metric-container"] [data-testid="stMetricValue"] {
-        color: #ffffff !important;
-        font-size: 1.5rem !important;
-    }
-
-    /* Metric delta */
-    div[data-testid="metric-container"] [data-testid="stMetricDelta"] {
-        color: #bae6fd !important;
-    }
-
-    /* Sidebar */
+    /* Sidebar - much lighter for better readability */
     div[data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #1e293b 0%, #1e3a8a 100%);
+        background: linear-gradient(180deg, #2d3748 0%, #1e3a5f 100%) !important;
     }
 
-    /* Sidebar headings and labels */
-    div[data-testid="stSidebar"] h2,
-    div[data-testid="stSidebar"] h3,
+    /* Sidebar headings - pure white, larger */
+    div[data-testid="stSidebar"] h2 {
+        color: #ffffff !important;
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 1rem !important;
+    }
+
+    div[data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        margin-top: 1.5rem !important;
+        margin-bottom: 0.8rem !important;
+    }
+
+    /* Sidebar input labels - bright white */
     div[data-testid="stSidebar"] label {
         color: #ffffff !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
     }
 
-    /* Sidebar markdown text */
-    div[data-testid="stSidebar"] .stMarkdown {
-        color: #f0f9ff !important;
-    }
-
-    /* Sidebar number input containers */
+    /* Sidebar input fields - white background, dark text, high contrast */
     div[data-testid="stSidebar"] .stNumberInput > div > div > input {
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        color: #0f172a !important;
-        border: 2px solid rgba(6, 182, 212, 0.5) !important;
-        border-radius: 5px;
-        font-weight: 500;
+        background-color: #ffffff !important;
+        color: #1a202c !important;
+        border: 2px solid #0ea5e9 !important;
+        border-radius: 6px;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        padding: 0.5rem !important;
     }
 
     div[data-testid="stSidebar"] .stNumberInput > div > div > input:focus {
         background-color: #ffffff !important;
-        border: 2px solid #06b6d4 !important;
-        box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
-    }
-
-    /* Sidebar number input labels */
-    div[data-testid="stSidebar"] .stNumberInput label {
-        color: #bae6fd !important;
-        font-weight: 500;
+        border: 3px solid #06b6d4 !important;
+        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
+        outline: none;
     }
 
     /* Sidebar radio buttons */
     div[data-testid="stSidebar"] .stRadio > label {
         color: #ffffff !important;
-        font-weight: 600;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
     }
 
     div[data-testid="stSidebar"] .stRadio label[data-baseweb="radio"] {
-        color: #e0f2fe !important;
+        color: #ffffff !important;
+        font-weight: 500 !important;
     }
 
-    /* Sidebar info boxes */
+    /* Sidebar info/alert boxes */
     div[data-testid="stSidebar"] div[data-testid="stAlert"] {
-        background-color: rgba(6, 182, 212, 0.25) !important;
-        border: 1px solid rgba(6, 182, 212, 0.6) !important;
-        color: #ffffff !important;
+        background-color: rgba(14, 165, 233, 0.3) !important;
+        border: 2px solid rgba(14, 165, 233, 0.8) !important;
     }
 
     div[data-testid="stSidebar"] div[data-testid="stAlert"] * {
         color: #ffffff !important;
+        font-weight: 500 !important;
     }
 
-    /* Input fields in main area */
-    .stSelectbox > div > div {
-        background-color: rgba(30, 58, 138, 0.3);
-        border: 1px solid rgba(6, 182, 212, 0.4);
-        border-radius: 5px;
-        color: #ffffff !important;
-    }
-
-    .stNumberInput > div > div {
-        background-color: rgba(30, 58, 138, 0.3);
-        border: 1px solid rgba(6, 182, 212, 0.4);
-        border-radius: 5px;
-    }
-
-    .stNumberInput input {
-        color: #ffffff !important;
-    }
-
-    /* Headers */
+    /* Headers - bright and prominent */
     .custom-header {
-        background: linear-gradient(90deg, #06b6d4, #0ea5e9, #38bdf8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #38bdf8 !important;
         font-size: 3rem;
-        font-weight: bold;
+        font-weight: 800;
         text-align: center;
         margin-bottom: 2rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .section-header {
-        background: linear-gradient(45deg, #0ea5e9, #38bdf8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #0ea5e9 !important;
         font-size: 1.8rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #0ea5e9;
+        border-bottom: 3px solid #0ea5e9;
         padding-bottom: 0.5rem;
     }
 
-    /* Expander content */
-    .expander-content {
-        background-color: rgba(30, 58, 138, 0.2);
-        border-radius: 10px;
-        padding: 1rem;
-        border: 1px solid rgba(6, 182, 212, 0.3);
+    /* Buttons - high contrast */
+    .stButton > button {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+        border: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
     }
 
-    /* Expander text */
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Expanders - better contrast */
     div[data-testid="stExpander"] {
-        background-color: rgba(30, 58, 138, 0.15);
+        background-color: rgba(45, 55, 72, 0.4);
         border-radius: 8px;
-        border: 1px solid rgba(6, 182, 212, 0.3);
+        border: 2px solid rgba(14, 165, 233, 0.4);
+        margin: 0.5rem 0;
+    }
+
+    div[data-testid="stExpander"] summary {
+        color: #ffffff !important;
+        font-weight: 600;
     }
 
     div[data-testid="stExpander"] * {
-        color: #f0f9ff !important;
+        color: #ffffff !important;
     }
 
     /* Highlight boxes */
     .highlight-box {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(14, 165, 233, 0.25) 100%);
+        background: rgba(14, 165, 233, 0.2);
         color: #ffffff !important;
-        padding: 1rem;
+        padding: 1.5rem;
         border-radius: 10px;
         margin: 1rem 0;
-        border-left: 4px solid #0ea5e9;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        border-left: 5px solid #0ea5e9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
     .highlight-box * {
         color: #ffffff !important;
+        font-weight: 500;
     }
 
-    /* Info, success, warning boxes */
+    /* Info/Alert boxes */
     div[data-testid="stAlert"] {
-        background-color: rgba(6, 182, 212, 0.2) !important;
-        border: 1px solid rgba(6, 182, 212, 0.5) !important;
-        color: #f0f9ff !important;
+        background-color: rgba(14, 165, 233, 0.25) !important;
+        border: 2px solid rgba(14, 165, 233, 0.7) !important;
     }
 
     div[data-testid="stAlert"] * {
-        color: #f0f9ff !important;
-    }
-
-    /* Buttons */
-    .stButton > button {
         color: #ffffff !important;
-        background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 100%);
-        border: none;
-        font-weight: 600;
+        font-weight: 500 !important;
     }
 
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #06b6d4 0%, #38bdf8 100%);
-    }
-
-    /* Radio buttons */
-    div[data-testid="stRadio"] label {
-        color: #f0f9ff !important;
-    }
-
-    /* Markdown text */
-    .stMarkdown {
-        color: #f0f9ff !important;
-    }
-
-    /* Captions */
-    .caption, small {
-        color: #bae6fd !important;
-    }
-
-    /* Table/DataFrame styling */
+    /* Tables - high contrast */
     table {
-        color: #f0f9ff !important;
+        color: #ffffff !important;
+        border-collapse: separate;
+        border-spacing: 0;
     }
 
     th {
-        background-color: rgba(6, 182, 212, 0.3) !important;
+        background-color: rgba(14, 165, 233, 0.4) !important;
         color: #ffffff !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        padding: 0.8rem !important;
+        border-bottom: 2px solid #0ea5e9;
     }
 
     td {
-        color: #f0f9ff !important;
+        color: #ffffff !important;
+        padding: 0.6rem !important;
+        font-weight: 500;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .custom-header {
+            font-size: 2rem !important;
+        }
+
+        .section-header {
+            font-size: 1.4rem !important;
+        }
+
+        div[data-testid="metric-container"] [data-testid="stMetricValue"] {
+            font-size: 1.5rem !important;
+        }
+
+        div[data-testid="stSidebar"] h2 {
+            font-size: 1.2rem !important;
+        }
+
+        div[data-testid="stSidebar"] h3 {
+            font-size: 1rem !important;
+        }
+    }
+
+    /* Small mobile devices */
+    @media (max-width: 480px) {
+        .custom-header {
+            font-size: 1.5rem !important;
+        }
+
+        .section-header {
+            font-size: 1.2rem !important;
+        }
+
+        .stButton > button {
+            font-size: 0.9rem !important;
+            padding: 0.6rem 1.5rem !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -556,18 +576,20 @@ if 'results' in st.session_state and st.session_state.results:
         name='Actual',
         x=performance_data['Metric'],
         y=performance_data['Actual'],
-        marker_color='rgba(6, 182, 212, 0.8)',
+        marker_color='#0ea5e9',
         text=[f"{val:.1f}%" for val in performance_data['Actual']],
         textposition='auto',
+        textfont=dict(size=14, color='white', family='Arial Black')
     ))
 
     fig.add_trace(go.Bar(
         name='Design Target',
         x=performance_data['Metric'],
         y=performance_data['Design Target'],
-        marker_color='rgba(14, 165, 233, 0.8)',
+        marker_color='#38bdf8',
         text=[f"{val:.1f}%" for val in performance_data['Design Target']],
         textposition='auto',
+        textfont=dict(size=14, color='white', family='Arial Black')
     ))
 
     fig.update_layout(
@@ -651,7 +673,7 @@ if 'results' in st.session_state and st.session_state.results:
             convection_duty,
             heater_librated_heat - absorbed_duty
         ],
-        'Colors': ['#06b6d4', '#0ea5e9', '#38bdf8']
+        'Colors': ['#0ea5e9', '#38bdf8', '#7dd3fc']
     }
 
     fig_pie = go.Figure(data=[go.Pie(
@@ -660,7 +682,8 @@ if 'results' in st.session_state and st.session_state.results:
         hole=.3,
         marker_colors=energy_data['Colors'],
         textinfo='label+percent',
-        textfont_size=12
+        textfont=dict(size=14, color='white', family='Arial Black'),
+        marker=dict(line=dict(color='#0a0e27', width=2))
     )])
 
     fig_pie.update_layout(
