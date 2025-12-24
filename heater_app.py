@@ -14,56 +14,56 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for stunning visuals
+# Custom CSS for professional visuals
 st.markdown("""
 <style>
     .main {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         color: white;
     }
 
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
 
     .css-1d391kg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
 
     div[data-testid="metric-container"] {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+        border: 1px solid rgba(6, 182, 212, 0.4);
         padding: 1rem;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(10px);
     }
 
     div[data-testid="metric-container"] > label[data-testid="metric-label"] > div {
         overflow-wrap: break-word;
         white-space: break-spaces;
-        color: #ffffff;
+        color: #06b6d4;
         font-weight: 600;
     }
 
     div[data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #2D1B69 0%, #11998e 100%);
+        background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
     }
 
     .stSelectbox > div > div {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(30, 58, 138, 0.3);
+        border: 1px solid rgba(6, 182, 212, 0.4);
         border-radius: 5px;
     }
 
     .stNumberInput > div > div {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: rgba(30, 58, 138, 0.3);
+        border: 1px solid rgba(6, 182, 212, 0.4);
         border-radius: 5px;
     }
 
     .custom-header {
-        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        background: linear-gradient(90deg, #06b6d4, #0ea5e9, #38bdf8);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -74,7 +74,7 @@ st.markdown("""
     }
 
     .section-header {
-        background: linear-gradient(45deg, #ff9a56, #ffd93d);
+        background: linear-gradient(45deg, #0ea5e9, #38bdf8);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -82,25 +82,25 @@ st.markdown("""
         font-weight: 600;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #ffd93d;
+        border-bottom: 2px solid #0ea5e9;
         padding-bottom: 0.5rem;
     }
 
     .expander-content {
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: rgba(30, 58, 138, 0.2);
         border-radius: 10px;
         padding: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(6, 182, 212, 0.3);
     }
 
     .highlight-box {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-        color: #333;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 165, 233, 0.2) 100%);
+        color: #e0f2fe;
         padding: 1rem;
         border-radius: 10px;
         margin: 1rem 0;
-        border-left: 4px solid #ff6b6b;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #0ea5e9;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -406,7 +406,7 @@ if 'results' in st.session_state and st.session_state.results:
         name='Actual',
         x=performance_data['Metric'],
         y=performance_data['Actual'],
-        marker_color='rgba(255, 107, 107, 0.8)',
+        marker_color='rgba(6, 182, 212, 0.8)',
         text=[f"{val:.1f}%" for val in performance_data['Actual']],
         textposition='auto',
     ))
@@ -415,7 +415,7 @@ if 'results' in st.session_state and st.session_state.results:
         name='Design Target',
         x=performance_data['Metric'],
         y=performance_data['Design Target'],
-        marker_color='rgba(78, 205, 196, 0.8)',
+        marker_color='rgba(14, 165, 233, 0.8)',
         text=[f"{val:.1f}%" for val in performance_data['Design Target']],
         textposition='auto',
     ))
@@ -501,7 +501,7 @@ if 'results' in st.session_state and st.session_state.results:
             convection_duty,
             heater_librated_heat - absorbed_duty
         ],
-        'Colors': ['#ff6b6b', '#4ecdc4', '#ffe66d']
+        'Colors': ['#06b6d4', '#0ea5e9', '#38bdf8']
     }
 
     fig_pie = go.Figure(data=[go.Pie(
