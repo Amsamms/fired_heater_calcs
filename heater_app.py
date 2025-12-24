@@ -19,17 +19,24 @@ st.markdown("""
 <style>
     .main {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        color: white;
+        color: #f0f9ff;
     }
 
     .stApp {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        color: #f0f9ff;
     }
 
     .css-1d391kg {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
 
+    /* All body text - bright and readable */
+    p, span, div, label {
+        color: #f0f9ff !important;
+    }
+
+    /* Metric containers */
     div[data-testid="metric-container"] {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
         border: 1px solid rgba(6, 182, 212, 0.4);
@@ -42,18 +49,37 @@ st.markdown("""
     div[data-testid="metric-container"] > label[data-testid="metric-label"] > div {
         overflow-wrap: break-word;
         white-space: break-spaces;
-        color: #06b6d4;
+        color: #7dd3fc !important;
         font-weight: 600;
     }
 
+    /* Metric values - bright white */
+    div[data-testid="metric-container"] [data-testid="stMetricValue"] {
+        color: #ffffff !important;
+        font-size: 1.5rem !important;
+    }
+
+    /* Metric delta */
+    div[data-testid="metric-container"] [data-testid="stMetricDelta"] {
+        color: #bae6fd !important;
+    }
+
+    /* Sidebar */
     div[data-testid="stSidebar"] > div {
         background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
     }
 
+    /* Sidebar text */
+    div[data-testid="stSidebar"] * {
+        color: #f0f9ff !important;
+    }
+
+    /* Input fields */
     .stSelectbox > div > div {
         background-color: rgba(30, 58, 138, 0.3);
         border: 1px solid rgba(6, 182, 212, 0.4);
         border-radius: 5px;
+        color: #ffffff !important;
     }
 
     .stNumberInput > div > div {
@@ -62,6 +88,11 @@ st.markdown("""
         border-radius: 5px;
     }
 
+    .stNumberInput input {
+        color: #ffffff !important;
+    }
+
+    /* Headers */
     .custom-header {
         background: linear-gradient(90deg, #06b6d4, #0ea5e9, #38bdf8);
         -webkit-background-clip: text;
@@ -86,6 +117,7 @@ st.markdown("""
         padding-bottom: 0.5rem;
     }
 
+    /* Expander content */
     .expander-content {
         background-color: rgba(30, 58, 138, 0.2);
         border-radius: 10px;
@@ -93,14 +125,83 @@ st.markdown("""
         border: 1px solid rgba(6, 182, 212, 0.3);
     }
 
+    /* Expander text */
+    div[data-testid="stExpander"] {
+        background-color: rgba(30, 58, 138, 0.15);
+        border-radius: 8px;
+        border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    div[data-testid="stExpander"] * {
+        color: #f0f9ff !important;
+    }
+
+    /* Highlight boxes */
     .highlight-box {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 165, 233, 0.2) 100%);
-        color: #e0f2fe;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(14, 165, 233, 0.25) 100%);
+        color: #ffffff !important;
         padding: 1rem;
         border-radius: 10px;
         margin: 1rem 0;
         border-left: 4px solid #0ea5e9;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .highlight-box * {
+        color: #ffffff !important;
+    }
+
+    /* Info, success, warning boxes */
+    div[data-testid="stAlert"] {
+        background-color: rgba(6, 182, 212, 0.2) !important;
+        border: 1px solid rgba(6, 182, 212, 0.5) !important;
+        color: #f0f9ff !important;
+    }
+
+    div[data-testid="stAlert"] * {
+        color: #f0f9ff !important;
+    }
+
+    /* Buttons */
+    .stButton > button {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #0891b2 0%, #0ea5e9 100%);
+        border: none;
+        font-weight: 600;
+    }
+
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #06b6d4 0%, #38bdf8 100%);
+    }
+
+    /* Radio buttons */
+    div[data-testid="stRadio"] label {
+        color: #f0f9ff !important;
+    }
+
+    /* Markdown text */
+    .stMarkdown {
+        color: #f0f9ff !important;
+    }
+
+    /* Captions */
+    .caption, small {
+        color: #bae6fd !important;
+    }
+
+    /* Table/DataFrame styling */
+    table {
+        color: #f0f9ff !important;
+    }
+
+    th {
+        background-color: rgba(6, 182, 212, 0.3) !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+
+    td {
+        color: #f0f9ff !important;
     }
 </style>
 """, unsafe_allow_html=True)
