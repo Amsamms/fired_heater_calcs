@@ -29,7 +29,22 @@ st.markdown("""
     }
 
     /* All body text - pure white for maximum contrast */
-    p, span, div, label, .stMarkdown {
+    p, span, div, label, .stMarkdown, h1, h2, h3, h4, h5, h6 {
+        color: #ffffff !important;
+    }
+
+    /* Ensure all text elements are white */
+    * {
+        color: #ffffff;
+    }
+
+    /* Specific elements that must be white */
+    .stMarkdown p, .stMarkdown span, .stMarkdown div {
+        color: #ffffff !important;
+    }
+
+    /* Streamlit text elements */
+    .stText, .stCaption, .stCode {
         color: #ffffff !important;
     }
 
@@ -593,12 +608,35 @@ if 'results' in st.session_state and st.session_state.results:
     ))
 
     fig.update_layout(
-        title="Performance vs Design Target Values",
+        title={
+            'text': "Performance vs Design Target Values",
+            'font': {'size': 20, 'color': '#ffffff', 'family': 'Arial Black'}
+        },
         barmode='group',
         template='plotly_dark',
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
+        font={'color': '#ffffff', 'size': 14, 'family': 'Arial'},
+        xaxis={
+            'title': {'text': '', 'font': {'color': '#ffffff', 'size': 14}},
+            'tickfont': {'color': '#ffffff', 'size': 13},
+            'gridcolor': 'rgba(255, 255, 255, 0.1)'
+        },
+        yaxis={
+            'title': {'text': 'Percentage (%)', 'font': {'color': '#ffffff', 'size': 14}},
+            'tickfont': {'color': '#ffffff', 'size': 13},
+            'gridcolor': 'rgba(255, 255, 255, 0.1)'
+        },
+        legend={
+            'font': {'color': '#ffffff', 'size': 14},
+            'bgcolor': 'rgba(0, 0, 0, 0.3)',
+            'bordercolor': '#0ea5e9',
+            'borderwidth': 1
+        },
+        hoverlabel={
+            'bgcolor': '#0ea5e9',
+            'font': {'color': '#ffffff', 'size': 14, 'family': 'Arial'}
+        },
         height=400
     )
 
@@ -687,10 +725,23 @@ if 'results' in st.session_state and st.session_state.results:
     )])
 
     fig_pie.update_layout(
-        title="Energy Distribution",
+        title={
+            'text': "Energy Distribution",
+            'font': {'size': 20, 'color': '#ffffff', 'family': 'Arial Black'}
+        },
         template='plotly_dark',
         paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
+        font={'color': '#ffffff', 'size': 14, 'family': 'Arial'},
+        legend={
+            'font': {'color': '#ffffff', 'size': 14},
+            'bgcolor': 'rgba(0, 0, 0, 0.3)',
+            'bordercolor': '#0ea5e9',
+            'borderwidth': 1
+        },
+        hoverlabel={
+            'bgcolor': '#0ea5e9',
+            'font': {'color': '#ffffff', 'size': 14, 'family': 'Arial'}
+        },
         height=400
     )
 
