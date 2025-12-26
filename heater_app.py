@@ -14,93 +14,176 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for stunning visuals
+# Custom CSS for modern, readable design
 st.markdown("""
 <style>
+    /* Main app - clean dark theme */
     .main {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background-color: #1a1a2e;
+        color: #eaeaea;
     }
 
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #1a1a2e;
     }
 
-    .css-1d391kg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Sidebar - professional dark blue */
+    div[data-testid="stSidebar"] > div {
+        background-color: #16213e;
     }
 
+    div[data-testid="stSidebar"] * {
+        color: #e8e8e8 !important;
+    }
+
+    div[data-testid="stSidebar"] h1,
+    div[data-testid="stSidebar"] h2,
+    div[data-testid="stSidebar"] h3 {
+        color: #4fc3f7 !important;
+    }
+
+    div[data-testid="stSidebar"] .stNumberInput label {
+        color: #b0bec5 !important;
+        font-size: 0.9rem;
+    }
+
+    /* Metric cards */
     div[data-testid="metric-container"] {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background-color: #0f3460;
+        border: 1px solid #4fc3f7;
         padding: 1rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     div[data-testid="metric-container"] > label[data-testid="metric-label"] > div {
         overflow-wrap: break-word;
         white-space: break-spaces;
-        color: #ffffff;
+        color: #4fc3f7 !important;
         font-weight: 600;
+        font-size: 0.95rem;
     }
 
-    div[data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #2D1B69 0%, #11998e 100%);
+    div[data-testid="metric-container"] div[data-testid="metric-value"] {
+        color: #ffffff !important;
+        font-size: 1.8rem;
     }
 
+    div[data-testid="metric-container"] div[data-testid="metric-delta"] {
+        color: #81c784 !important;
+    }
+
+    /* Input styling */
     .stSelectbox > div > div {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 5px;
+        background-color: #0f3460;
+        border: 1px solid #4fc3f7;
+        border-radius: 8px;
+        color: #ffffff;
     }
 
     .stNumberInput > div > div {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 5px;
+        background-color: #0f3460;
+        border: 1px solid #4fc3f7;
+        border-radius: 8px;
     }
 
+    .stNumberInput input {
+        color: #ffffff !important;
+        background-color: #0f3460 !important;
+    }
+
+    /* Headers */
     .custom-header {
-        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 3rem;
+        color: #29b6f6 !important;
+        font-size: 2.5rem;
         font-weight: bold;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .section-header {
-        background: linear-gradient(45deg, #ff9a56, #ffd93d);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 1.8rem;
+        color: #ff7043 !important;
+        font-size: 1.6rem;
         font-weight: 600;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        border-bottom: 2px solid #ffd93d;
+        border-bottom: 2px solid #ff7043;
         padding-bottom: 0.5rem;
     }
 
-    .expander-content {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        padding: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Force all main content text to be visible */
+    .stApp h1, .stApp h2, .stApp h3 {
+        color: #29b6f6 !important;
     }
 
-    .highlight-box {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
-        color: #333;
-        padding: 1rem;
+    /* Sidebar headers */
+    div[data-testid="stSidebar"] .section-header {
+        color: #ff7043 !important;
+    }
+
+    /* Expanders */
+    .expander-content {
+        background-color: #16213e;
         border-radius: 10px;
+        padding: 1rem;
+        border: 1px solid #4fc3f7;
+    }
+
+    .streamlit-expanderHeader {
+        color: #4fc3f7 !important;
+        font-weight: 600;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+        background-color: #0f3460;
+        color: #ffffff;
+        padding: 1.5rem;
+        border-radius: 12px;
         margin: 1rem 0;
-        border-left: 4px solid #ff6b6b;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #4fc3f7;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .highlight-box h3 {
+        color: #4fc3f7 !important;
+        margin-bottom: 1rem;
+    }
+
+    /* Buttons */
+    .stButton > button {
+        background-color: #4fc3f7;
+        color: #1a1a2e;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .stButton > button:hover {
+        background-color: #29b6f6;
+        box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
+    }
+
+    /* Tables and text */
+    .stMarkdown p, .stMarkdown li {
+        color: #e0e0e0;
+    }
+
+    /* Info/Success/Error boxes */
+    .stAlert {
+        background-color: #16213e;
+        border-radius: 8px;
+    }
+
+    /* Radio buttons */
+    .stRadio > label {
+        color: #b0bec5 !important;
+    }
+
+    .stRadio div[role="radiogroup"] label {
+        color: #e0e0e0 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -110,9 +193,9 @@ if 'heater_inputs' not in st.session_state:
     st.session_state.heater_inputs = {}
 
 # Main header
-st.markdown('<h1 class="custom-header">🔥 Heater Efficiency Calculator</h1>', unsafe_allow_html=True)
+st.markdown('<h1 style="color: #4fc3f7; font-size: 2.5rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem;">🔥 Heater Efficiency Calculator</h1>', unsafe_allow_html=True)
 st.markdown(
-    '<p style="text-align: center; font-size: 1.2rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">Advanced API-560 Based Heater Performance Analysis</p>',
+    '<p style="text-align: center; font-size: 1.2rem; color: #b0bec5; margin-bottom: 2rem;">Advanced API-560 Based Heater Performance Analysis</p>',
     unsafe_allow_html=True
 )
 
@@ -406,28 +489,48 @@ if 'results' in st.session_state and st.session_state.results:
         name='Actual',
         x=performance_data['Metric'],
         y=performance_data['Actual'],
-        marker_color='rgba(255, 107, 107, 0.8)',
+        marker_color='#4fc3f7',
         text=[f"{val:.1f}%" for val in performance_data['Actual']],
-        textposition='auto',
+        textposition='outside',
+        textfont=dict(color='#ffffff', size=14, family='Arial Black'),
     ))
 
     fig.add_trace(go.Bar(
         name='Design Target',
         x=performance_data['Metric'],
         y=performance_data['Design Target'],
-        marker_color='rgba(78, 205, 196, 0.8)',
+        marker_color='#ff7043',
         text=[f"{val:.1f}%" for val in performance_data['Design Target']],
-        textposition='auto',
+        textposition='outside',
+        textfont=dict(color='#ffffff', size=14, family='Arial Black'),
     ))
 
     fig.update_layout(
-        title="Performance vs Design Target Values",
+        title=dict(
+            text="Performance vs Design Target Values",
+            font=dict(size=20, color='#4fc3f7')
+        ),
         barmode='group',
         template='plotly_dark',
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
-        height=400
+        paper_bgcolor='#1a1a2e',
+        plot_bgcolor='#16213e',
+        font=dict(color='#e0e0e0', size=14),
+        legend=dict(
+            font=dict(size=14, color='#ffffff'),
+            bgcolor='rgba(15, 52, 96, 0.8)',
+            bordercolor='#4fc3f7',
+            borderwidth=1
+        ),
+        xaxis=dict(
+            tickfont=dict(size=13, color='#e0e0e0'),
+            gridcolor='#2a3f5f'
+        ),
+        yaxis=dict(
+            tickfont=dict(size=13, color='#e0e0e0'),
+            gridcolor='#2a3f5f',
+            title=dict(text='Percentage (%)', font=dict(size=14, color='#b0bec5'))
+        ),
+        height=450
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -501,24 +604,36 @@ if 'results' in st.session_state and st.session_state.results:
             convection_duty,
             heater_librated_heat - absorbed_duty
         ],
-        'Colors': ['#ff6b6b', '#4ecdc4', '#ffe66d']
+        'Colors': ['#4fc3f7', '#81c784', '#ff7043']
     }
 
     fig_pie = go.Figure(data=[go.Pie(
         labels=energy_data['Energy Type'],
         values=energy_data['Value'],
-        hole=.3,
+        hole=.4,
         marker_colors=energy_data['Colors'],
         textinfo='label+percent',
-        textfont_size=12
+        textfont=dict(size=14, color='#ffffff', family='Arial'),
+        insidetextfont=dict(size=13, color='#ffffff'),
+        outsidetextfont=dict(size=14, color='#e0e0e0'),
+        pull=[0.02, 0.02, 0.02]
     )])
 
     fig_pie.update_layout(
-        title="Energy Distribution",
+        title=dict(
+            text="Energy Distribution",
+            font=dict(size=20, color='#4fc3f7')
+        ),
         template='plotly_dark',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color='white',
-        height=400
+        paper_bgcolor='#1a1a2e',
+        font=dict(color='#e0e0e0', size=14),
+        legend=dict(
+            font=dict(size=14, color='#ffffff'),
+            bgcolor='rgba(15, 52, 96, 0.8)',
+            bordercolor='#4fc3f7',
+            borderwidth=1
+        ),
+        height=450
     )
 
     col1, col2 = st.columns([1, 1])
@@ -537,6 +652,6 @@ if 'results' in st.session_state and st.session_state.results:
 # Footer
 st.markdown("---")
 st.markdown(
-    '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">🔥 Heater Efficiency Calculator | Based on API-560 Standards | Developed by Ahmed Mohamed Sabri</p>',
+    '<p style="text-align: center; color: #b0bec5; font-size: 1rem;">Heater Efficiency Calculator | Based on API-560 Standards | Developed by Ahmed Mohamed Sabri</p>',
     unsafe_allow_html=True
 )
