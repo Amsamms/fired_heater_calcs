@@ -27,9 +27,24 @@ st.markdown("""
         background-color: #1a1a2e;
     }
 
-    /* Sidebar - professional dark blue */
-    div[data-testid="stSidebar"] > div {
-        background-color: #16213e;
+    /* Sidebar - professional dark blue (desktop and mobile) */
+    [data-testid="stSidebar"],
+    [data-testid="stSidebar"] > div,
+    [data-testid="stSidebar"] > div > div,
+    [data-testid="stSidebar"] section,
+    section[data-testid="stSidebar"],
+    section[data-testid="stSidebar"] > div,
+    .stSidebar,
+    .stSidebar > div,
+    [data-testid="stSidebarContent"],
+    [data-testid="stSidebarUserContent"] {
+        background-color: #16213e !important;
+    }
+
+    /* Sidebar overlay background on mobile */
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="collapsedControl"] {
+        background-color: #16213e !important;
     }
 
     div[data-testid="stSidebar"] * {
