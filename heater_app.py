@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for modern, readable design
+# Custom CSS for modern, readable design (v2)
 st.markdown("""
 <style>
     /* Main app - clean dark theme */
